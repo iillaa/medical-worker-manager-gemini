@@ -1,11 +1,16 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { db } from '../services/db';
+import backupService from '../services/backup';
 import { FaSave, FaLock, FaDownload, FaUpload } from 'react-icons/fa';
 
 export default function Settings({ currentPin, onPinChange }) {
   const [pin, setPin] = useState(currentPin);
   const [msg, setMsg] = useState('');
   const fileRef = useRef();
+  const [backupDir, setBackupDir] = useState(null);
+  const [backupStatus, setBackupStatus] = useState('');
+  const [backupThreshold, setBackupThreshold] = useState(10);
+  const [autoImportEnabled, setAutoImportEnabled] = useState(false);
 
   const handleSave = async () => {
     if (pin.length !== 4 || isNaN(pin)) {
@@ -60,6 +65,91 @@ export default function Settings({ currentPin, onPinChange }) {
     setTimeout(() => setMsg(''), 3000);
   };
 
+  useEffect(() => {
+    // load backup settings
+    (async () => {
+      try {
+        await backupService.init();
+        setBackupThreshold(backupService.getThreshold());
+        setAutoImportEnabled(await backupService.getAutoImport());
+        setBackupDir(backupService.getBackupDirName());
+      } catch (e) {
+        console.warn('backup init failed', e);
+      }
+    })();
+  }, []);
+
+  const handleChooseBackupDir = async () => {
+    try {
+      await backupService.chooseDirectory();
+      setBackupDir(backupService.getBackupDirName());
+      setBackupStatus('Backup directory set. Auto backups will save here when triggered.');
+      setTimeout(() => setBackupStatus(''), 3000);
+    } catch (e) {
+      setBackupStatus('Directory pick canceled or not supported.');
+      setTimeout(() => setBackupStatus(''), 3000);
+    }
+  };
+
+  const handleGetBackupNow = async () => {
+    try {
+      const json = await db.exportData();
+      await backupService.saveBackupJSON(json, 'backup-manual.json');
+      setBackupStatus('Backup saved');
+      setTimeout(() => setBackupStatus(''), 3000);
+    } catch (e) {
+      setBackupStatus('Backup failed: ' + (e.message || e));
+    }
+  };
+
+  const handleImportFromBackup = async () => {
+    setBackupStatus('Importing...');
+    try {
+      const txt = await backupService.readBackupJSON();
+      if (!txt) {
+        setBackupStatus('No backup file found in directory.');
+        return;
+      }
+      const ok = await db.importData(txt);
+      setBackupStatus(ok ? 'Imported from backup folder.' : 'Import failed.');
+      setTimeout(() => setBackupStatus(''), 3000);
+    } catch (e) {
+      setBackupStatus('Import failed: ' + (e.message || e));
+    }
+  };
+
+  const handleClearBackupDir = async () => {
+    try {
+      await backupService.clearDirectory();
+      setBackupDir(null);
+      setBackupStatus('Backup directory cleared.');
+      setTimeout(() => setBackupStatus(''), 3000);
+    } catch (e) {
+      setBackupStatus('Failed to clear directory.');
+    }
+  };
+
+  const handleThresholdSave = async () => {
+    try {
+      await backupService.setThreshold(Number(backupThreshold));
+      setBackupStatus('Threshold saved');
+      setTimeout(() => setBackupStatus(''), 3000);
+    } catch (e) {
+      setBackupStatus('Failed to save threshold');
+    }
+  };
+
+  const handleToggleAutoImport = async () => {
+    try {
+      await backupService.setAutoImport(!autoImportEnabled);
+      setAutoImportEnabled(!autoImportEnabled);
+      setBackupStatus('Auto import ' + (!autoImportEnabled ? 'enabled' : 'disabled'));
+    } catch (e) {
+      setBackupStatus('Failed to toggle auto import');
+    }
+    setTimeout(() => setBackupStatus(''), 3000);
+  };
+
   return (
     <div>
       <h2 style={{ marginBottom: '1.5rem' }}>Paramètres</h2>
@@ -111,9 +201,31 @@ export default function Settings({ currentPin, onPinChange }) {
           </label>
         </div>
 
-        <div style={{ marginTop: '1rem' }}>
-          {msg && <p style={{ color: msg.includes('import') ? 'var(--success)' : 'var(--danger)' }}>{msg}</p>}
-        </div>
+          <div style={{ marginTop: '1rem' }}>
+            <h3>Auto Backup</h3>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <button className="btn btn-outline" onClick={handleChooseBackupDir}>Choose Backup Folder</button>
+              <button className="btn btn-outline" onClick={handleGetBackupNow}>Backup Now</button>
+              <button className="btn btn-outline" onClick={handleImportFromBackup} title="Import from backup folder">Import from Backup</button>
+            </div>
+
+            <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <label style={{ fontSize: '0.9rem' }}>Auto Export Threshold (exams):</label>
+              <input type="number" value={backupThreshold} onChange={(e) => setBackupThreshold(Number(e.target.value))} style={{ width: '6rem', padding: '0.5rem' }} />
+              <button className="btn btn-outline" onClick={handleThresholdSave}>Save</button>
+            </div>
+            <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <label style={{ fontSize: '0.9rem' }}>Auto Import From Backup Folder</label>
+              <button className="btn btn-outline" onClick={handleToggleAutoImport}>{autoImportEnabled ? 'Disable' : 'Enable'}</button>
+            </div>
+
+            <div style={{ marginTop: '0.5rem' }}>
+              {backupStatus && <p>{backupStatus}</p>}
+              {backupDir && <p>Current folder: {backupDir}</p>}
+              {backupDir && <button className="btn btn-outline" onClick={handleClearBackupDir}>Clear Folder</button>}
+            </div>
+            {msg && <p style={{ color: msg.includes('import') ? 'var(--success)' : 'var(--danger)' }}>{msg}</p>}
+          </div>
       </div>
     </div>
   );

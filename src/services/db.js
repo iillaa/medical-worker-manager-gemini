@@ -1,5 +1,6 @@
 import localforage from 'localforage';
 import { encryptString, decryptString } from './crypto';
+import backupService from './backup';
 
 // Configure localforage
 localforage.config({
@@ -103,12 +104,29 @@ export const db = {
       exams.push(exam);
     }
     await this.saveAll(STORES.EXAMS, exams);
+    // register change for auto-backup; if threshold reached, perform export
+    try {
+      const thresholdReached = await backupService.registerExamChange();
+      if (thresholdReached) {
+        await backupService.performAutoExport(async () => await db.exportData());
+      }
+    } catch (e) {
+      console.warn('Auto backup error', e);
+    }
     return exam;
   },
   async deleteExam(id) {
     const exams = await this.getExams();
     const newExams = exams.filter(e => e.id !== id);
     await this.saveAll(STORES.EXAMS, newExams);
+    try {
+      const thresholdReached = await backupService.registerExamChange();
+      if (thresholdReached) {
+        await backupService.performAutoExport(async () => await db.exportData());
+      }
+    } catch (e) {
+      console.warn('Auto backup error', e);
+    }
   },
 
   // Settings

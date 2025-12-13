@@ -57,3 +57,25 @@ Pensez à faire un "Export" régulièrement (bouton en haut de la liste des trav
 - **ESLint & Prettier:** Les règles de linting et de formatage sont installées; utilisez `npm run lint` et `npm run format`.
 - **Responsive Sidebar:** La barre latérale est responsive et peut être masquée sur mobile.
 - **Print Disabled:** Les templates d'impression ont été retirés temporairement (désactivés) par défaut — utilisez import/export JSON pour générer des documents si nécessaire.
+
+### Standalone (Tap-to-run) vs Full `dist`
+
+- **Tap-to-run single file:** Run `npm run build:file` to create `dist/index-standalone.html` — a single self-contained HTML file that does not try to register a service worker and inlines the icon. You can copy just this file to a device and open it directly (no server). This is the best choice when you want a single file to open on Android/PC.
+- **Full `dist` to keep PWA:** If you want the PWA installability and service worker cache, copy the whole `dist/` directory and serve it with a local server on the device; opening `index.html` via `file://` will run the app but service workers won't be registered.
+
+**Recommendation:** Use `index-standalone.html` for the lowest friction if you plan to just copy a file to devices and tap it. Use the full `dist` hosted on a local server to enable the PWA features.
+
+## Auto Backup (no server)
+
+You can configure the app to automatically export to a folder you choose when a number of exam changes is reached. This uses the File System Access API when available (Chrome/Chromium based browsers):
+
+- Open `Paramètres` → pick a backup folder with the `Choose Backup Folder` button.
+- Set the `Auto Export Threshold (exams)` number (default 10). Once the app detects that many changed/added exams, it will export the current JSON to `backup-auto.json` inside the chosen folder.
+- If the browser doesn't support the File System Access API, the app will fall back to triggering a download of the JSON file (user chooses where to save it).
+
+This lets you copy the folder to devices and keep a live `backup-auto.json` which updates automatically (whenever the threshold is reached). For full disaster recovery, continue to `Export` regularly and save copies on external drives or cloud storage.
+
+### Notes about File System Access & `file://`
+
+- Some browser features (the File System Access API, service workers) require a secure origin (HTTPS or `localhost`) and might not be available when opening `index.html` with the `file://` protocol. If `Choose Backup Folder` is not supported in your browser, the app will instead fallback to downloading backup files automatically.
+- If you copy `dist/` to a tablet and open via file manager (file://), you will have the app; but browser support for writing to an adjacent file is limited. Choosing a folder and giving the app permission usually requires the app to be served on a secure origin.
