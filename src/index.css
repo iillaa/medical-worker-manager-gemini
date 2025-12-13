@@ -79,6 +79,28 @@ body::before {
   flex-shrink: 0;
 }
 
+/* Responsive: collapse sidebar on small screens */
+@media (max-width: 820px) {
+  .sidebar {
+    position: fixed;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .app-shell.sidebar-closed .sidebar {
+    transform: translateX(-100%);
+  }
+  .app-shell:not(.sidebar-closed) .sidebar {
+    transform: translateX(0);
+  }
+
+  /* Make the main content fill the screen */
+  .main-content {
+    padding: 1rem;
+  }
+}
+
 .main-content {
   flex: 1;
   overflow-y: auto;
@@ -287,8 +309,4 @@ td {
   .main-content { padding: 1rem; padding-bottom: 100px; }
 }
 
-@media print {
-  .sidebar, .btn, .no-print { display: none; }
-  body { background: white; }
-  .card { box-shadow: none; border: 1px solid #ccc; }
-}
+/* Printing disabled - removed special print CSS to avoid print output */

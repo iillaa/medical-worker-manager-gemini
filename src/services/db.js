@@ -1,4 +1,5 @@
 import localforage from 'localforage';
+import { encryptString, decryptString } from './crypto';
 
 // Configure localforage
 localforage.config({
@@ -134,6 +135,12 @@ export const db = {
     return JSON.stringify(data);
   },
 
+  async exportDataEncrypted(password) {
+    const json = await this.exportData();
+    if (!password) throw new Error('Password required');
+    return await encryptString(password, json);
+  },
+
   async importData(jsonString) {
     try {
       const data = JSON.parse(jsonString);
@@ -144,6 +151,18 @@ export const db = {
       return true;
     } catch (e) {
       console.error("Import failed", e);
+      return false;
+    }
+  }
+  ,
+
+  async importDataEncrypted(encryptedString, password) {
+    if (!password) throw new Error('Password required');
+    try {
+      const json = await decryptString(password, encryptedString);
+      return await this.importData(json);
+    } catch (e) {
+      console.error('Decryption failed', e);
       return false;
     }
   }

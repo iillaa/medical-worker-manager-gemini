@@ -49,3 +49,11 @@ Une application web autonome (Single Page Application) pour la gestion des visit
 
 ## Sauvegarde
 Pensez à faire un "Export" régulièrement (bouton en haut de la liste des travailleurs) et à stocker le fichier JSON en lieu sûr.
+
+## Nouvelles fonctionnalités et améliorations
+- **PWA (Progressive Web App):** L'application peut maintenant être installée sur un appareil et fonctionne mieux hors-ligne.
+- **Export/Import chiffré:** Dans `Paramètres` vous pouvez maintenant exporter les données chiffrées (AES-GCM) avec un mot de passe et réimporter des sauvegardes chiffrées.
+- **Tests et CI:** Des tests unitaires (Vitest) et une action GitHub CI ont été ajoutés. Les PRs seront validées automatiquement.
+- **ESLint & Prettier:** Les règles de linting et de formatage sont installées; utilisez `npm run lint` et `npm run format`.
+- **Responsive Sidebar:** La barre latérale est responsive et peut être masquée sur mobile.
+- **Print Disabled:** Les templates d'impression ont été retirés temporairement (désactivés) par défaut — utilisez import/export JSON pour générer des documents si nécessaire.

@@ -12,6 +12,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [selectedWorkerId, setSelectedWorkerId] = useState(null);
   const [isLocked, setIsLocked] = useState(true);
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [pin, setPin] = useState("0011"); // Default PIN
 
   const initApp = async () => {
@@ -40,7 +41,7 @@ function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${isSidebarOpen ? '' : 'sidebar-closed'}`}>
       <aside className="sidebar no-print">
         <div className="brand">
           <FaUserMd size={28} />
@@ -83,6 +84,9 @@ function App() {
 
       <main className="main-content">
         <div className="container">
+          <button aria-label="Toggle sidebar" className="btn btn-sm no-print" style={{marginBottom: '1rem'}} onClick={() => setSidebarOpen(!isSidebarOpen)}>
+            {isSidebarOpen ? 'Masquer' : 'Afficher'}
+          </button>
           {view === 'dashboard' && (
             <Dashboard onNavigateWorker={navigateToWorker} />
           )}
