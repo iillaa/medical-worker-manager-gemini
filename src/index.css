@@ -41,11 +41,6 @@ body {
   line-height: 1.5;
   margin: 0;
   
-  /* Background Image */
-  background-image: url('background2.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
   min-height: 100vh;
 }
 
