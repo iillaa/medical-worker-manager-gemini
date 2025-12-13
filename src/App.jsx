@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { db } from './services/db';
+import backupService from './services/backup';
 import Dashboard from './components/Dashboard';
 import WorkerList from './components/WorkerList';
 import WorkerDetail from './components/WorkerDetail'; // We might need this or just modal
@@ -18,6 +19,12 @@ function App() {
   const initApp = async () => {
     setLoading(true);
     await db.init();
+    await backupService.init();
+    try {
+      await backupService.checkAndAutoImport(db);
+    } catch (e) {
+      console.warn('auto import check failed', e);
+    }
     const settings = await db.getSettings();
     if (settings.pin) {
         setPin(settings.pin);
@@ -69,16 +76,10 @@ function App() {
           </div>
         </nav>
         
-        <div style={{marginTop: 'auto', padding: '1.5rem 1rem', borderTop:'1px solid var(--border)', textAlign: 'center'}}>
-           <div style={{fontSize:'0.65rem', textTransform:'uppercase', letterSpacing:'0.1em', color:'var(--text-muted)', marginBottom:'0.25rem'}}>
-             Réalisé par
-           </div>
-           <div style={{fontFamily:'"Times New Roman", serif', fontStyle:'italic', fontWeight:'700', color:'var(--primary)', fontSize:'0.95rem'}}>
-             Dr. Kibeche Ali Dia Eddine
-           </div>
-           <div style={{fontSize:'0.6rem', color:'var(--text-muted)', marginTop:'0.5rem', opacity: 0.7}}>
-             v1.0
-           </div>
+        <div className="credit" style={{marginTop: 'auto'}}>
+           <div className="credit-title">Réalisé par</div>
+           <div className="credit-author">Dr. Kibeche Ali Dia Eddine</div>
+           <div className="credit-version">v1.0</div>
         </div>
       </aside>
 
