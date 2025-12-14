@@ -1,6 +1,3 @@
-
-
-
 # Gestionnaire de Visites Médicales (Offline SPA)
 
 Une application web autonome (Single Page Application) pour la gestion des visites médicales périodiques en entreprise. Conçue pour fonctionner hors ligne, sans serveur, avec une base de données locale sécurisée.
@@ -64,6 +61,7 @@ Cette approche multi-outils a permis de créer une application robuste et compl�
 Pensez à faire un "Export" régulièrement (bouton en haut de la liste des travailleurs) et à stocker le fichier JSON en lieu sûr.
 
 ## Nouvelles fonctionnalités et améliorations
+- **Mode Sombre:** Nouvelle fonctionnalité de thème sombre/clair avec persistance automatique. Le bouton de basculement est accessible en haut à droite de l'interface.
 - **PWA (Progressive Web App):** L'application peut maintenant être installée sur un appareil et fonctionne mieux hors-ligne.
 - **Export/Import chiffré:** Dans `Paramètres` vous pouvez maintenant exporter les données chiffrées (AES-GCM) avec un mot de passe et réimporter des sauvegardes chiffrées.
 - **Tests et CI:** Des tests unitaires (Vitest) et une action GitHub CI ont été ajoutés. Les PRs seront validées automatiquement.
