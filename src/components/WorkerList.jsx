@@ -7,10 +7,12 @@ import { FaPlus, FaSearch, FaFileDownload, FaFileUpload, FaEdit, FaTrash, FaFilt
 export default function WorkerList({ onNavigateWorker }) {
   const [workers, setWorkers] = useState([]);
   const [filteredWorkers, setFilteredWorkers] = useState([]);
+
   const [departments, setDepartments] = useState([]);
   const [exams, setExams] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDept, setFilterDept] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   
   const [showForm, setShowForm] = useState(false);
   const [editingWorker, setEditingWorker] = useState(null);
@@ -138,24 +140,78 @@ export default function WorkerList({ onNavigateWorker }) {
         </div>
       </div>
 
+
       <div className="card" style={{display:'flex', gap:'1rem', padding:'1rem', alignItems:'center', marginBottom:'1.5rem', flexWrap:'wrap'}}>
-        <div style={{flex:1, display:'flex', alignItems:'center', minWidth:'250px'}}>
-            <FaSearch style={{color:'var(--text-muted)'}} />
+        <div style={{flex:1, display:'flex', alignItems:'center', minWidth:'250px', position:'relative'}}>
+            <FaSearch style={{color:'var(--text-muted)', marginRight:'0.5rem', transition:'all 0.2s ease'}} />
             <input 
-              style={{border:'none', outline:'none', padding:'0.5rem', width:'100%', fontSize:'1rem', background:'transparent'}} 
+              style={{
+                border:'none', 
+                outline:'none', 
+                padding:'0.75rem', 
+                width:'100%', 
+                fontSize:'1rem', 
+                background:'transparent',
+                transition:'all 0.2s ease'
+              }} 
               placeholder="Rechercher par nom ou matricule..." 
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
+              onFocus={(e) => {
+                e.target.style.backgroundColor = 'var(--primary-light)';
+                e.target.style.borderRadius = '8px';
+                e.target.style.transform = 'translate(-2px, -2px)';
+                e.target.style.boxShadow = '2px 2px 0px var(--border-color)';
+              }}
+              onBlur={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+                e.target.style.transform = 'translate(0, 0)';
+                e.target.style.boxShadow = 'none';
+              }}
             />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                style={{
+                  position:'absolute',
+                  right:'0.5rem',
+                  background:'none',
+                  border:'none',
+                  color:'var(--text-muted)',
+                  cursor:'pointer',
+                  padding:'0.25rem',
+                  borderRadius:'4px',
+                  transition:'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = 'var(--danger-light)';
+                  e.target.style.color = 'var(--danger)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = 'var(--text-muted)';
+                }}
+              >
+                ×
+              </button>
+            )}
         </div>
         <div style={{borderLeft:'1px solid var(--border-color)', height:'2rem', margin:'0 0.5rem'}}></div>
         <div style={{display:'flex', alignItems:'center', gap:'0.5rem'}}>
             <FaFilter style={{color:'var(--text-muted)'}} />
             <select 
                 className="input" 
-                style={{padding:'0.4rem', width:'auto', minWidth:'150px'}}
+                style={{padding:'0.75rem', width:'auto', minWidth:'150px', transition:'all 0.2s ease'}}
                 value={filterDept}
                 onChange={e => setFilterDept(e.target.value)}
+                onFocus={(e) => {
+                  e.target.style.transform = 'translate(-1px, -1px)';
+                  e.target.style.boxShadow = '2px 2px 0px var(--border-color)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.transform = 'translate(0, 0)';
+                  e.target.style.boxShadow = 'none';
+                }}
             >
                 <option value="">Tous les services</option>
                 {departments.map(d => (
@@ -163,6 +219,18 @@ export default function WorkerList({ onNavigateWorker }) {
                 ))}
             </select>
         </div>
+        {(searchTerm || filterDept) && (
+          <button 
+            className="btn btn-outline btn-sm"
+            onClick={() => {
+              setSearchTerm('');
+              setFilterDept('');
+            }}
+            style={{transition:'all 0.2s ease'}}
+          >
+            Effacer filtres
+          </button>
+        )}
       </div>
 
       <div className="table-container">
@@ -182,7 +250,9 @@ export default function WorkerList({ onNavigateWorker }) {
                const isOverdue = logic.isOverdue(w.next_exam_due);
                const status = getWorkerLastStatus(w.id);
                return (
-                  <tr key={w.id} onClick={() => onNavigateWorker(w.id)} style={{cursor:'pointer'}}>
+
+
+                  <tr key={w.id} onClick={() => onNavigateWorker(w.id)} className={isOverdue ? 'overdue-worker-row' : ''} style={{cursor:'pointer'}}>
                     <td style={{fontWeight:500}}>
                         {w.full_name}
                     </td>

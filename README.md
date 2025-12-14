@@ -1,6 +1,19 @@
+
+
+
 # Gestionnaire de Visites Médicales (Offline SPA)
 
 Une application web autonome (Single Page Application) pour la gestion des visites médicales périodiques en entreprise. Conçue pour fonctionner hors ligne, sans serveur, avec une base de données locale sécurisée.
+
+## Histoire du Projet
+
+Ce projet a été développé en plusieurs phases, démontrant l'évolution des outils de développement IA :
+
+1. **Phase initiale** : Commencé avec **Google Gemini CLI** pour la création des fonctionnalités de base
+2. **Phase de transition** : Migré vers **GitHub Copilot** pour le développement et l'amélioration du code
+3. **Phase de finalisation** : Perfectionné par **BlackBox** utilisant **MiniMax M2** pour les dernières retouches, finitions du UI et optimisations des fonctions
+
+Cette approche multi-outils a permis de créer une application robuste et complète, en tirant parti des forces uniques de chaque plateforme d'IA.
 
 ## Fonctionnalités Clés
 

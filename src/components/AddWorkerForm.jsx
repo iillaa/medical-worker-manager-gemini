@@ -66,10 +66,50 @@ export default function WorkerForm({ workerToEdit, onClose, onSave }) {
   //   ? workplaces.filter(w => w.department_id === parseInt(formData.department_id))
   //   : [];
 
+
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <h3>{workerToEdit ? 'Modifier' : 'Ajouter'} un travailleur</h3>
+    <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="modal" style={{
+        animation: 'modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        transform: 'scale(0.9)',
+        animationFillMode: 'forwards'
+      }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '1.5rem',
+          paddingBottom: '1rem',
+          borderBottom: '2px solid var(--border-color)'
+        }}>
+          <h3 style={{margin: 0, color: 'var(--primary)'}}>
+            {workerToEdit ? 'Modifier' : 'Ajouter'} un travailleur
+          </h3>
+          <button 
+            onClick={onClose}
+            style={{
+              background: 'var(--danger-light)',
+              border: '2px solid var(--danger)',
+              color: 'var(--danger)',
+              borderRadius: '8px',
+              padding: '0.5rem',
+              cursor: 'pointer',
+              fontSize: '1.2rem',
+              fontWeight: 'bold',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translate(-2px, -2px)';
+              e.target.style.boxShadow = '2px 2px 0px var(--danger)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translate(0, 0)';
+              e.target.style.boxShadow = 'none';
+            }}
+          >
+            ×
+          </button>
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="label">Nom complet</label>

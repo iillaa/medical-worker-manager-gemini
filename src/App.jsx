@@ -6,7 +6,8 @@ import WorkerList from './components/WorkerList';
 import WorkerDetail from './components/WorkerDetail'; // We might need this or just modal
 import PinLock from './components/PinLock';
 import Settings from './components/Settings';
-import { FaUserMd, FaUsers, FaChartLine, FaCog } from 'react-icons/fa';
+
+import { FaUsers, FaChartLine, FaCog } from 'react-icons/fa';
 
 function App() {
   const [view, setView] = useState('dashboard'); // dashboard, workers, settings
@@ -50,36 +51,51 @@ function App() {
   return (
     <div className={`app-shell ${isSidebarOpen ? '' : 'sidebar-closed'}`}>
       <aside className="sidebar no-print">
+
+
+
+
         <div className="brand">
-          <FaUserMd size={28} />
-          <span>GestMed Travail</span>
+          <span className="brand-text">𝓒𝓸𝓹𝓻𝓸</span>
+          <span className="brand-icon">🧪</span>
+          <span className="brand-text">𝓦𝓪𝓽𝓬𝓱</span>
         </div>
         
+
         <nav style={{display:'flex', flexDirection:'column', gap:'0.25rem'}}>
           <div 
             className={`nav-item ${view === 'dashboard' ? 'active' : ''}`}
             onClick={() => setView('dashboard')}
+            title="Tableau de bord"
           >
-            <FaChartLine /> Tableau de bord
+            <FaChartLine className="nav-icon" />
+            <span className="nav-text">Tableau de bord</span>
           </div>
           <div 
             className={`nav-item ${view === 'workers' || view === 'worker-detail' ? 'active' : ''}`}
             onClick={() => { setView('workers'); setSelectedWorkerId(null); }}
+            title="Travailleurs"
           >
-            <FaUsers /> Travailleurs
+            <FaUsers className="nav-icon" />
+            <span className="nav-text">Travailleurs</span>
           </div>
           <div 
             className={`nav-item ${view === 'settings' ? 'active' : ''}`}
             onClick={() => setView('settings')}
+            title="Paramètres"
           >
-            <FaCog /> Paramètres
+            <FaCog className="nav-icon" />
+            <span className="nav-text">Paramètres</span>
           </div>
         </nav>
         
+
+
+
         <div className="credit" style={{marginTop: 'auto'}}>
-           <div className="credit-title">Réalisé par</div>
-           <div className="credit-author">Dr. Kibeche Ali Dia Eddine</div>
-           <div className="credit-version">v1.0</div>
+           <div className="credit-title">Développer par</div>
+           <div className="credit-author">Dr Kibeche Ali Dia Eddine</div>
+           <div className="credit-version">1.1</div>
         </div>
       </aside>
 

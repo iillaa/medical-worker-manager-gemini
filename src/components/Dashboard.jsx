@@ -20,7 +20,34 @@ export default function Dashboard({ onNavigateWorker }) {
     loadStats();
   }, []);
 
-  if (loading) return <div>Chargement...</div>;
+
+  if (loading) return (
+    <div style={{
+      display: 'flex', 
+      flexDirection: 'column', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      height: '60vh',
+      gap: '1rem'
+    }}>
+      <div className="loading-spinner"></div>
+      <div style={{color: 'var(--text-muted)', fontWeight: 600}}>Chargement des données...</div>
+      <div style={{
+        width: '200px',
+        height: '4px',
+        backgroundColor: 'var(--bg-app)',
+        borderRadius: '2px',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'var(--primary)',
+          animation: 'shimmer 1.5s infinite'
+        }}></div>
+      </div>
+    </div>
+  );
 
   return (
     <div>
@@ -87,8 +114,9 @@ export default function Dashboard({ onNavigateWorker }) {
                   </tr>
                 </thead>
                 <tbody>
+
                   {stats.overdue.map(w => (
-                    <tr key={w.id} style={{background: 'var(--danger-light)'}}>
+                    <tr key={w.id} className="overdue-worker-row">
                       <td>
                         <div style={{fontWeight:700}}>{w.full_name}</div>
                         <span className="badge badge-red" style={{marginTop:'0.25rem'}}>En Retard</span>
