@@ -1,3 +1,5 @@
+
+
 import { useState, useEffect } from 'react';
 import { db } from './services/db';
 import backupService from './services/backup';
@@ -6,6 +8,7 @@ import WorkerList from './components/WorkerList';
 import WorkerDetail from './components/WorkerDetail'; // We might need this or just modal
 import PinLock from './components/PinLock';
 import Settings from './components/Settings';
+import ThemeToggle from './components/ThemeToggle';
 
 import { FaUsers, FaChartLine, FaCog } from 'react-icons/fa';
 
@@ -48,8 +51,11 @@ function App() {
       return <PinLock correctPin={pin} onUnlock={() => setIsLocked(false)} />;
   }
 
+
   return (
-    <div className={`app-shell ${isSidebarOpen ? '' : 'sidebar-closed'}`}>
+    <>
+      <ThemeToggle />
+      <div className={`app-shell ${isSidebarOpen ? '' : 'sidebar-closed'}`}>
       <aside className="sidebar no-print">
 
 
@@ -119,9 +125,11 @@ function App() {
           {view === 'settings' && (
             <Settings currentPin={pin} onPinChange={setPin} />
           )}
+
         </div>
       </main>
     </div>
+    </>
   );
 }
 
