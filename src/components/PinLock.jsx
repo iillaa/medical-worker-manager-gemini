@@ -67,7 +67,8 @@ export default function PinLock({ onUnlock, correctPin = "0000" }) {
               width: '15px',
               height: '15px',
               borderRadius: '50%',
-              background: i < pin.length ? (error ? 'var(--danger)' : 'var(--primary)') : 'var(--border)',
+
+              background: i < pin.length ? (error ? 'var(--danger-border)' : 'var(--primary)') : 'var(--border-color)',
               transition: 'background 0.2s'
             }} />
           ))}

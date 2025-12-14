@@ -1,23 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+
+
+/* Light Mode (Default) */
 :root {
-  /* Cartoon / Flat Vector Palette */
+  /* Original Light Mode Colors */
   --primary: #6366f1; /* Indigo */
   --primary-light: #e0e7ff;
   
   --danger: #ef4444; /* Red */
   --danger-light: #fee2e2;
+  --danger-text: #991b1b; /* Dark Red for text */
+  --danger-border: #ef4444;
 
   --success: #22c55e; /* Green */
   --success-light: #dcfce7;
+  --success-text: #166534; /* Dark Green for text */
+  --success-border: #22c55e;
 
   --warning: #f59e0b; /* Orange/Amber */
   --warning-light: #fef3c7;
+  --warning-text: #92400e; /* Dark Amber for text */
+  --warning-border: #f59e0b;
 
   /* Surfaces & Borders */
   --bg-app: #f0f9ff; /* Light Sky Blue */
   --surface: #ffffff;
+  --surface-hover: #f8fafc;
   
   /* The "Thick Outline" Look */
   --border-color: #1e293b; /* Dark Slate / Almost Black */
@@ -32,7 +42,58 @@
   /* Text */
   --text-main: #1e293b;
   --text-muted: #64748b;
+  
+  /* Input & Table Variables */
+  --input-bg: #ffffff;
+  --input-focus: #6366f1;
+  --table-alt: #fafafa;
 }
+
+/* Dark Mode Override */
+[data-theme="dark"] {
+  /* Medical-Grade Dark Mode Palette (Slate Blue Base) */
+  --primary: #A78BFA; /* Light Violet - Brighter for dark mode */
+  --primary-light: rgba(167, 139, 250, 0.15); /* 15% opacity for active states */
+  
+  --danger: #ef4444; /* Red */
+  --danger-light: #450A0A; /* Dark Red for backgrounds */
+  --danger-text: #FECACA; /* Light Red for text */
+  --danger-border: #EF4444;
+
+  --success: #22c55e; /* Green */
+  --success-light: #064E3B; /* Dark Green for backgrounds */
+  --success-text: #A7F3D0; /* Light Green for text */
+  --success-border: #10B981;
+
+  --warning: #f59e0b; /* Orange/Amber */
+  --warning-light: #451A03; /* Dark Amber for backgrounds */
+  --warning-text: #FED7AA; /* Light Amber for text */
+  --warning-border: #F59E0B;
+
+  /* Surfaces & Borders - Medical Grade Dark */
+  --bg-app: #0F172A; /* Deep Slate - Softer than pure black */
+  --surface: #1E293B; /* Lighter Slate for cards */
+  --surface-hover: #334155; /* Hover state */
+  
+  /* The "Thick Outline" Look - Adapted for Dark Mode */
+  --border-color: #334155; /* Mid-Tone Slate - Visible but not distracting */
+  
+  /* Shadows - Removed for Dark Mode (using border contrast instead) */
+  --shadow-hard: none;
+  --shadow-hover: none;
+  --shadow-active: none;
+
+  /* Text - High Contrast for Medical Use */
+  --text-main: #F1F5F9; /* Off-White - Never pure white */
+  --text-muted: #94A3B8; /* Muted Blue-Grey */
+  
+  /* Additional Dark Mode Variables */
+  --input-bg: #020617; /* Darker than surface for inputs */
+  --input-focus: #A78BFA; /* Purple focus */
+  --table-alt: rgba(51, 65, 85, 0.2); /* 20% opacity for zebra striping */
+}
+
+
 
 body {
   font-family: 'Fredoka', 'Inter', sans-serif; /* Rounder, friendlier font */
@@ -40,12 +101,16 @@ body {
   color: var(--text-main);
   line-height: 1.5;
   margin: 0;
-  
   min-height: 100vh;
 }
 
-/* Semi-transparent white overlay to ensure readability over cartoon background */
+/* White overlay only for light mode - removed for dark mode */
 body::before {
+  content: none;
+}
+
+/* Add subtle white overlay for light mode to ensure readability */
+[data-theme="light"] body::before {
   content: "";
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -288,12 +353,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-/* Card Component - Enhanced Neobrutalist Style */
+
+/* Card Component - Enhanced Neobrutalist Style for Dark Mode */
 .card {
   background: var(--surface);
   border-radius: var(--radius);
   border: var(--border-width) solid var(--border-color);
-  box-shadow: var(--shadow-hard);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -308,7 +373,7 @@ h1, h2, h3, h4, h5, h6 {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
   transition: left 0.5s;
 }
 
@@ -317,15 +382,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card:hover {
-  transform: translate(-3px, -3px);
-  box-shadow: var(--shadow-hover);
+  background: var(--surface-hover);
   animation: cardBounce 0.3s ease;
 }
 
 @keyframes cardBounce {
-  0% { transform: translate(-3px, -3px); }
-  50% { transform: translate(-1px, -1px); }
-  100% { transform: translate(-3px, -3px); }
+  0% { background: var(--surface-hover); }
+  50% { background: var(--surface); }
+  100% { background: var(--surface-hover); }
 }
 
 
@@ -381,23 +445,37 @@ h1, h2, h3, h4, h5, h6 {
 .btn-primary { background-color: var(--primary); color: white; border-color: var(--border-color); }
 .btn-primary:hover { filter: brightness(1.1); }
 
-.btn-outline { background-color: white; color: var(--text-main); }
-.btn-outline:hover { background-color: #f8fafc; }
+
+
+.btn-outline { background-color: var(--surface); color: var(--text-main); }
+.btn-outline:hover { background-color: var(--surface-hover); }
+
+/* Light mode button hover effects */
+[data-theme="light"] .btn-outline:hover { 
+  background-color: #f8fafc; 
+}
+
 
 .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; border-width: 2px; box-shadow: 2px 2px 0px var(--border-color); }
 .btn-sm:active { transform: translate(2px, 2px); box-shadow: none; }
 
+/* Remove shadows in dark mode */
+[data-theme="dark"] .btn-sm { 
+  box-shadow: none; 
+}
 
-/* Inputs - Enhanced Neobrutalist Style */
+
+
+/* Inputs - Enhanced Neobrutalist Style for Dark Mode */
 .input {
   display: block;
   width: 100%;
   padding: 0.75rem;
   font-size: 1rem;
-  background-color: white;
+  background-color: var(--input-bg);
+  color: var(--text-main);
   border: var(--border-width) solid var(--border-color);
   border-radius: var(--radius);
-  box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
   box-sizing: border-box;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -405,29 +483,23 @@ h1, h2, h3, h4, h5, h6 {
 
 .input:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: var(--shadow-hard);
-  transform: translate(-1px, -1px);
+  border-color: var(--input-focus);
   animation: inputFocus 0.3s ease;
 }
 
 .input:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0px rgba(0,0,0,0.15);
+  background-color: var(--surface-hover);
 }
 
 @keyframes inputFocus {
   0% { 
     border-color: var(--border-color);
-    transform: translate(0, 0);
   }
   50% { 
-    border-color: var(--primary);
-    transform: translate(-2px, -2px);
+    border-color: var(--input-focus);
   }
   100% { 
-    border-color: var(--primary);
-    transform: translate(-1px, -1px);
+    border-color: var(--input-focus);
   }
 }
 
@@ -448,18 +520,17 @@ h1, h2, h3, h4, h5, h6 {
 
 
 /* Table - Enhanced Neobrutalist Style */
+
 .table-container {
   overflow-x: auto;
   border-radius: var(--radius);
   border: var(--border-width) solid var(--border-color);
-  background: white;
-  box-shadow: var(--shadow-hard);
+  background: var(--surface);
   transition: all 0.2s ease;
 }
 
 .table-container:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--shadow-hover);
+  background: var(--surface-hover);
 }
 
 table {
@@ -467,8 +538,9 @@ table {
   border-collapse: collapse;
 }
 
+
 thead {
-  background-color: var(--primary-light);
+  background-color: var(--surface);
   border-bottom: var(--border-width) solid var(--border-color);
 }
 
@@ -476,7 +548,7 @@ th {
   padding: 1rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--primary);
+  color: var(--text-main);
   border-right: 1px solid rgba(0,0,0,0.1);
   position: relative;
   cursor: pointer;
@@ -484,50 +556,52 @@ th {
 }
 
 th:hover {
-  background-color: var(--primary);
-  color: white;
+  background-color: var(--surface-hover);
+  color: var(--primary);
   transform: translate(-1px, -1px);
-  box-shadow: 2px 2px 0px var(--border-color);
 }
+
 
 td {
   padding: 1rem;
-  border-bottom: 2px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-color);
   font-weight: 500;
   transition: all 0.2s ease;
   position: relative;
+  color: var(--text-main);
 }
 
 tr:hover td {
-  background-color: var(--bg-app);
+  background-color: var(--surface-hover);
   transform: translate(-1px, 0);
-  box-shadow: 2px 0px 0px var(--border-color);
 }
 
-
-
+/* Dark mode zebra striping - Row 1 transparent, Row 2 with low opacity */
 tr:nth-child(even) td {
-  background-color: #fafafa;
+  background-color: var(--table-alt);
 }
 
 tr:nth-child(even):hover td {
-  background-color: var(--primary-light);
+  background-color: var(--surface-hover);
 }
 
-/* Override zebra striping for overdue workers */
+
+/* Override zebra striping for overdue workers - Medical Grade Dark */
 .overdue-worker-row {
   background: var(--danger-light) !important;
 }
 
 .overdue-worker-row td {
   background-color: var(--danger-light) !important;
+  color: var(--danger-text) !important;
 }
 
 .overdue-worker-row:hover td {
   background-color: var(--danger-light) !important;
 }
 
-/* Badges - Pills with borders */
+
+/* Badges - Medical Grade Dark Mode with Subtle Backgrounds */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -535,13 +609,34 @@ tr:nth-child(even):hover td {
   border-radius: 50px;
   font-size: 0.75rem;
   font-weight: 800;
-  border: 2px solid var(--border-color);
+  border: 2px solid;
   text-transform: uppercase;
 }
-.badge-red { background-color: var(--danger); color: white; }
-.badge-green { background-color: var(--success); color: white; }
-.badge-yellow { background-color: var(--warning); color: black; }
-.badge-blue { background-color: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+
+/* Subtle dark backgrounds with proper contrast text */
+.badge-red { 
+  background-color: var(--danger-light); 
+  color: var(--danger-text); 
+  border-color: var(--danger-border);
+}
+
+.badge-green { 
+  background-color: var(--success-light); 
+  color: var(--success-text); 
+  border-color: var(--success-border);
+}
+
+.badge-yellow { 
+  background-color: var(--warning-light); 
+  color: var(--warning-text); 
+  border-color: var(--warning-border);
+}
+
+.badge-blue { 
+  background-color: var(--primary-light); 
+  color: var(--primary); 
+  border-color: var(--primary);
+}
 
 
 /* Navigation - Enhanced Neobrutalist Style */
@@ -585,12 +680,19 @@ tr:nth-child(even):hover td {
   animation: navBounce 0.3s ease;
 }
 
+
+
 .nav-item.active {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: 2px solid var(--border-color);
+  transform: translate(-1px, -1px);
+}
+
+/* Light mode active state - solid purple background */
+[data-theme="light"] .nav-item.active {
   background-color: var(--primary);
   color: white;
-  border: 2px solid var(--border-color);
-  box-shadow: 2px 2px 0px var(--border-color);
-  transform: translate(-1px, -1px);
 }
 
 @keyframes navBounce {
@@ -614,10 +716,11 @@ tr:nth-child(even):hover td {
 }
 
 
-/* Modal - Enhanced Neobrutalist Style */
+
+/* Modal - Enhanced Neobrutalist Style for Dark Mode */
 .modal-overlay {
   position: fixed; inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
   display: flex; justify-content: center; align-items: center;
   z-index: 50;
@@ -625,9 +728,8 @@ tr:nth-child(even):hover td {
 }
 
 .modal {
-  background: white;
+  background: var(--surface);
   border: var(--border-width) solid var(--border-color);
-  box-shadow: 8px 8px 0px rgba(0,0,0,0.5);
   border-radius: var(--radius);
   width: 90%; max-width: 600px;
   max-height: 90vh;

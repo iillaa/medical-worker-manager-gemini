@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { db } from '../services/db';
 import { logic } from '../services/logic';
-import { FaChevronRight, FaClipboardList, FaExclamationTriangle, FaMicroscope } from 'react-icons/fa';
+import { FaChevronRight, FaClipboardList, FaExclamationTriangle, FaMicroscope, FaMoon, FaSun } from 'react-icons/fa';
 
-export default function Dashboard({ onNavigateWorker }) {
+export default function Dashboard({ onNavigateWorker, theme = 'dark', onThemeChange }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -20,6 +20,11 @@ export default function Dashboard({ onNavigateWorker }) {
     loadStats();
   }, []);
 
+  const toggleTheme = () => {
+    if (onThemeChange) {
+      onThemeChange(theme === 'dark' ? 'light' : 'dark');
+    }
+  };
 
   if (loading) return (
     <div style={{
@@ -51,38 +56,71 @@ export default function Dashboard({ onNavigateWorker }) {
 
   return (
     <div>
-      <header style={{marginBottom: '2rem'}}>
-        <h2>Tableau de bord</h2>
-        <p>Aperçu de la situation médicale.</p>
+      <header style={{marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <div>
+          <h2>Tableau de bord</h2>
+          <p>Aperçu de la situation médicale.</p>
+        </div>
+        
+        {/* Theme Toggle Button */}
+        {onThemeChange && (
+          <button 
+            className="btn btn-sm btn-outline"
+            onClick={toggleTheme}
+            style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}
+          >
+            {theme === 'dark' ? <FaSun size={16} /> : <FaMoon size={16} />}
+            {theme === 'dark' ? 'Mode Clair' : 'Mode Sombre'}
+          </button>
+        )}
       </header>
       
       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '2.5rem'}}>
-        {/* Due Soon - Orange/Yellow */}
-        <div className="card" style={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'var(--warning-light)', padding: '1.5rem'}}>
+
+        {/* Due Soon - Orange/Yellow with appropriate theme colors */}
+        <div className="card" style={{
+          display:'flex', 
+          justifyContent:'space-between', 
+          alignItems:'center', 
+          background: theme === 'dark' ? 'var(--warning-light)' : 'var(--warning-light)', 
+          padding: '1.5rem'
+        }}>
           <div>
             <h3 className="stat-card-title" style={{color:'var(--warning-text)'}}>À faire (15 jours)</h3>
-            <div className="stat-card-value" style={{color:'var(--warning)'}}>{stats.dueSoon.length}</div>
+            <div className="stat-card-value" style={{color:'var(--warning-border)'}}>{stats.dueSoon.length}</div>
             <p style={{margin:0, fontWeight:600, color:'var(--warning-text)'}}>Travailleurs</p>
           </div>
           <div style={{opacity: 0.8}}>
-             <FaClipboardList size={60} color="var(--warning)" />
+             <FaClipboardList size={60} color="var(--warning-border)" />
           </div>
         </div>
         
-        {/* Overdue - Red */}
-        <div className="card" style={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'var(--danger-light)', padding: '1.5rem'}}>
+        {/* Overdue - Red with appropriate theme colors */}
+        <div className="card" style={{
+          display:'flex', 
+          justifyContent:'space-between', 
+          alignItems:'center', 
+          background: theme === 'dark' ? 'var(--danger-light)' : 'var(--danger-light)', 
+          padding: '1.5rem'
+        }}>
           <div>
             <h3 className="stat-card-title" style={{color:'var(--danger-text)'}}>En Retard</h3>
-            <div className="stat-card-value" style={{color:'var(--danger)'}}>{stats.overdue.length}</div>
+            <div className="stat-card-value" style={{color:'var(--danger-border)'}}>{stats.overdue.length}</div>
             <p style={{margin:0, fontWeight:600, color:'var(--danger-text)'}}>Travailleurs</p>
           </div>
           <div style={{opacity: 0.8}}>
-             <FaExclamationTriangle size={60} color="var(--danger)" />
+             <FaExclamationTriangle size={60} color="var(--danger-border)" />
           </div>
         </div>
 
-        {/* Positive Cases - Blue/Teal */}
-        <div className="card" style={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'var(--primary-light)', padding: '1.5rem'}}>
+        {/* Positive Cases - Purple with appropriate theme colors */}
+        <div className="card" style={{
+          display:'flex', 
+          justifyContent:'space-between', 
+          alignItems:'center', 
+          background: theme === 'dark' ? 'var(--primary-light)' : 'var(--primary-light)', 
+          padding: '1.5rem'
+        }}>
           <div>
             <h3 className="stat-card-title" style={{color:'var(--primary)'}}>Suivi Médical</h3>
             <div className="stat-card-value" style={{color:'var(--primary)'}}>{stats.activePositive.length}</div>
@@ -95,10 +133,15 @@ export default function Dashboard({ onNavigateWorker }) {
       </div>
 
       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '1.5rem'}}>
+
         {/* Urgent List */}
         <div className="card" style={{padding:0, overflow:'hidden'}}>
-          <div style={{padding:'1.5rem', borderBottom:'var(--border-width) solid var(--border-color)', background:'white'}}>
-            <h3 style={{marginBottom:0}}>Examens à prévoir</h3>
+          <div style={{
+            padding:'1.5rem', 
+            borderBottom:'var(--border-width) solid var(--border-color)', 
+            background:'var(--surface)'
+          }}>
+            <h3 style={{marginBottom:0, color:'var(--text-main)'}}>Examens à prévoir</h3>
           </div>
           
           {stats.dueSoon.length === 0 && stats.overdue.length === 0 ? (
@@ -148,8 +191,12 @@ export default function Dashboard({ onNavigateWorker }) {
 
         {/* Re-tests */}
         <div className="card" style={{padding:0, overflow:'hidden'}}>
-          <div style={{padding:'1.5rem', borderBottom:'var(--border-width) solid var(--border-color)', background:'white'}}>
-             <h3 style={{marginBottom:0}}>Contre-visites</h3>
+          <div style={{
+            padding:'1.5rem', 
+            borderBottom:'var(--border-width) solid var(--border-color)', 
+            background:'var(--surface)'
+          }}>
+            <h3 style={{marginBottom:0, color:'var(--text-main)'}}>Contre-visites</h3>
           </div>
           
           {stats.retests.length === 0 ? (

@@ -16,6 +16,7 @@ function App() {
   const [isLocked, setIsLocked] = useState(true);
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [pin, setPin] = useState("0011"); // Default PIN
+  const [theme, setTheme] = useState('dark'); // 'dark' or 'light'
 
   const initApp = async () => {
     setLoading(true);
@@ -30,7 +31,30 @@ function App() {
     if (settings.pin) {
         setPin(settings.pin);
     }
+    
+    // Load saved theme preference
+    const savedTheme = settings.theme || 'dark';
+    setTheme(savedTheme);
+    applyTheme(savedTheme);
+    
     setLoading(false);
+  };
+
+  const applyTheme = (newTheme) => {
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
+
+  const handleThemeChange = async (newTheme) => {
+    setTheme(newTheme);
+    applyTheme(newTheme);
+    
+    // Save theme preference to settings
+    try {
+      const settings = await db.getSettings();
+      await db.saveSettings({ ...settings, theme: newTheme });
+    } catch (e) {
+      console.warn('Failed to save theme preference:', e);
+    }
   };
 
   useEffect(() => {
@@ -51,9 +75,6 @@ function App() {
   return (
     <div className={`app-shell ${isSidebarOpen ? '' : 'sidebar-closed'}`}>
       <aside className="sidebar no-print">
-
-
-
 
         <div className="brand">
           <span className="brand-text">𝓒𝓸𝓹𝓻𝓸</span>
@@ -88,9 +109,6 @@ function App() {
             <span className="nav-text">Paramètres</span>
           </div>
         </nav>
-        
-
-
 
         <div className="credit" style={{marginTop: 'auto'}}>
            <div className="credit-title">Développer par</div>
@@ -101,11 +119,17 @@ function App() {
 
       <main className="main-content">
         <div className="container">
-          <button aria-label="Toggle sidebar" className="btn btn-sm no-print" style={{marginBottom: '1rem'}} onClick={() => setSidebarOpen(!isSidebarOpen)}>
-            {isSidebarOpen ? 'Masquer' : 'Afficher'}
-          </button>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
+            <button aria-label="Toggle sidebar" className="btn btn-sm no-print" onClick={() => setSidebarOpen(!isSidebarOpen)}>
+              {isSidebarOpen ? 'Masquer' : 'Afficher'}
+            </button>
+          </div>
           {view === 'dashboard' && (
-            <Dashboard onNavigateWorker={navigateToWorker} />
+            <Dashboard 
+              onNavigateWorker={navigateToWorker} 
+              theme={theme}
+              onThemeChange={handleThemeChange}
+            />
           )}
           {view === 'workers' && (
             <WorkerList onNavigateWorker={navigateToWorker} />
